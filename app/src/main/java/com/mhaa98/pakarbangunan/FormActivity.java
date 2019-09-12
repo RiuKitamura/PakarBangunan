@@ -4,19 +4,22 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,27 +32,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
-
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
-public class FormActivity extends AppCompatActivity {
+public class FormActivity extends AppCompatActivity implements LocationListener {
 
-    private static final int RC_CAMERA_AND_LOCATION = 2;
     EditText nama_bg, lantai, tahun, alamat_bg, lati, longi, nama, alamat, no_hp;
     ImageView poto;
     Button next;
@@ -59,7 +53,7 @@ public class FormActivity extends AppCompatActivity {
     String pathToFile;
 
     boolean isi_gambar;
-
+    LocationManager locationManager;
     ImageButton gps;
 
     @Override
@@ -74,12 +68,14 @@ public class FormActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
         }
 
+        checkPermision();
+
         gps = findViewById(R.id.location_btn);
         gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(FormActivity.this, "Pastikan gps aktif", Toast.LENGTH_SHORT).show();
-                methodRequiresTwoPermission();
+                getLocation();
+
             }
         });
 
@@ -148,46 +144,7 @@ public class FormActivity extends AppCompatActivity {
         });
     }
 
-    @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
-    private void methodRequiresTwoPermission() {
-        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            // Already have permission, do the thing
-            FusedLocationProviderClient mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mFusedLocation.getLastLocation().addOnSuccessListener(
-                    this, new OnSuccessListener<Location>() {
-                        @Override
 
-                        public void onSuccess(Location location) {
-
-                            if (location != null) {
-
-                                // Do it all with location
-
-                                Log.d("My Current location", "Lat : " + location.getLatitude() + " Long : " + location.getLongitude());
-                                // Display in Toast
-
-                                lati.setText(location.getLatitude() + "");
-                                longi.setText(location.getLongitude() + "");
-
-                            }
-                        }
-                    });
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, "location rationale", RC_CAMERA_AND_LOCATION, perms);
-        }
-    }
 
     private void SelectImage(){
 
@@ -249,22 +206,9 @@ public class FormActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode,data);
 
         if(requestCode == CAMERA_REQUEST_CODE1 && resultCode == RESULT_OK){
-////            Bundle bundle = data.getExtras();
-////            final Bitmap bmp = (Bitmap) bundle.get("data");
-////            poto.setImageBitmap(bmp);
-////            isi_gambar=true;
-//            Intent galleryIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//            String pictureFilePath = "";
-//            File f = new File(pictureFilePath);
-//            Uri picUri = Uri.fromFile(f);
-//            galleryIntent.setData(picUri);
-//            this.sendBroadcast(galleryIntent);
-//            Bitmap bitmap = BitmapFactory.decodeFile(pathToFile);
             CropImage.activity(Uri.fromFile(new File(pathToFile)))
                     .setAspectRatio(1,1)
                     .start(this);
-//            poto.setImageBitmap(bitmap);
-//            isi_gambar=true;
         }
         else if(requestCode == CAMERA_REQUEST_CODE2 && resultCode == RESULT_OK){
             Uri imageUri = data.getData();
@@ -298,31 +242,6 @@ public class FormActivity extends AppCompatActivity {
             }
         }
 
-//        if(resultCode== Activity.RESULT_OK){
-//
-//            if(requestCode==CAMERA_REQUEST_CODE1){
-//
-//                Bundle bundle = data.getExtras();
-//                final Bitmap bmp = (Bitmap) bundle.get("data");
-//                poto.setImageBitmap(bmp);
-//                isi_gambar=true;
-//
-//            }else if(requestCode==CAMERA_REQUEST_CODE2){
-//                Bitmap  mBitmap = null;
-//                Uri selectedImageUri = data.getData();
-//                try {
-//                    mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-//                    int a = mBitmap.getWidth();
-//                    int b = mBitmap.getHeight();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                //poto.setImageURI(selectedImageUri);
-//                poto.setImageBitmap(mBitmap);
-//                isi_gambar=true;
-//            }
-//
-//        }
     }
 
 
@@ -351,6 +270,59 @@ public class FormActivity extends AppCompatActivity {
         alert.showDialog(FormActivity.this);
 
     }
+
+    //latitude longitude
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLocation();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
+    public void getLocation() {
+        try{
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+        } catch (SecurityException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void checkPermision() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double longi2 = location.getLongitude();
+        double lati2 = location.getLatitude();
+        lati.setText(""+lati2);
+        longi.setText(""+longi2);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast.makeText(this, "Enable new provider", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(this, "Please enable GPS and Internet", Toast.LENGTH_SHORT).show();
+    }
+    ///////////////////////////////////////
 
     public class ViewDialog {
         public void showDialog(Activity activity) {
