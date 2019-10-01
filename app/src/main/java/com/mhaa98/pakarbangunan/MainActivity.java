@@ -13,8 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     Button btn_add;
+    Button btn_info;
 
     ListView mListView;
     ArrayList<Model> mList;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     final int CAMERA_REQUEST_CODE2 = 0;
 
     ImageView imageViewIcon;
+    ImageView imgPesan;
+    TextView btnTentang;
 
     public static SQLiteHelper mSQLiteHelper;
 
@@ -43,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
         btn_add = findViewById(R.id.add_btn);
         TextView pesan = findViewById(R.id.pesan);
-
+        imgPesan = findViewById(R.id.pesan_img);
+        btn_info = findViewById(R.id.ll_info);
+        btnTentang = findViewById(R.id.btn_tentang);
 
         mListView = findViewById(R.id.list1);
         mList = new ArrayList<>();
@@ -52,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSQLiteHelper = new SQLiteHelper(this, "kerusakan_bangunan.sqlite", null, 1);
         mSQLiteHelper.queryData("CREATE TABLE IF NOT EXISTS data_bangunan(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "nama_bangunan VARCHAR, jumlah_lantai VARCHAR, tahun VARCHAR, alamat_bangunan VARCHAR, latitude VARCHAR, " +
-                "longitude VARCHAR, poto BLOB, nama VARCHAR, alamat VARCHAR, nomor_hp VARCHAR, hasil_diagnosis VARCHAR(3), tingkat_kepercayaan double)");
+                "nama_bangunan VARCHAR, jumlah_lantai VARCHAR, tahun VARCHAR, alamat_bangunan VARCHAR, " +
+                "poto BLOB, nama VARCHAR, alamat VARCHAR, nomor_hp VARCHAR, hasil_diagnosis VARCHAR(3), tingkat_kepercayaan double)");
 
         mSQLiteHelper.queryData("CREATE TABLE IF NOT EXISTS data_kerusakan(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "id_bangunan INTEGER, struktur INTEGER, level_kerusakan INTEGER)");
@@ -62,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSQLiteHelper.queryData("CREATE TABLE IF NOT EXISTS ds_gejala(id_gejala INTEGER, " +
                 "nama_gejala VARCHAR)");
-        mSQLiteHelper.queryData("CREATE TABLE IF NOT EXISTS ds_level(id_level VARCHAR(3), " +
-                "level VARCHAR, note VARCHAR)");
+        mSQLiteHelper.queryData("CREATE TABLE IF NOT EXISTS ds_level(id_level INTEGER, " +
+                "level VARCHAR, kondisi VARCHAR, penaganan VARCHAR)");
         mSQLiteHelper.queryData("CREATE TABLE IF NOT EXISTS ds_rules(level INTEGER, gejala INTEGER, cf DOUBLE)");
 
         //mSQLiteHelper.getReadableDatabase();
@@ -82,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
             mSQLiteHelper.insertRules();
         }
 
-        Cursor cursor = mSQLiteHelper.getData("SELECT id, nama_bangunan, jumlah_lantai, tahun, alamat_bangunan,latitude, " +
-                "longitude, nama, alamat, nomor_hp, tingkat_kepercayaan FROM data_bangunan ORDER BY id DESC");
+        Cursor cursor = mSQLiteHelper.getData("SELECT id, nama_bangunan, jumlah_lantai, tahun, alamat_bangunan, " +
+                "nama, alamat, nomor_hp, tingkat_kepercayaan FROM data_bangunan ORDER BY id DESC");
         mList.clear();
         while (cursor.moveToNext()){
             int id = cursor.getInt(0);
@@ -91,21 +96,23 @@ public class MainActivity extends AppCompatActivity {
             String lantai = cursor.getString(2);
             String thn = cursor.getString(3);
             String alamat_b = cursor.getString(4);
-            String lati = cursor.getString(5);
-            String longi = cursor.getString(6);
+//            String lati = cursor.getString(5);
+//            String longi = cursor.getString(6);
             //byte[] poto = cursor.getBlob(7);
-            String nama = cursor.getString(7);
-            String alamat = cursor.getString(8);
-            String nomor = cursor.getString(9);
-            double kepercayaan = cursor.getDouble(10);
+            String nama = cursor.getString(5);
+            String alamat = cursor.getString(6);
+            String nomor = cursor.getString(7);
+            double kepercayaan = cursor.getDouble(8);
 
-            mList.add(new Model(id, nama_b, lantai, thn, alamat_b,lati, longi, nama, alamat, nomor,kepercayaan));
+            mList.add(new Model(id, nama_b, lantai, thn, alamat_b, nama, alamat, nomor,kepercayaan));
 
         }
         mAdapter.notifyDataSetChanged();
-        pesan.setText("");
+        pesan.setVisibility(View.GONE);
+        imgPesan.setVisibility(View.GONE);
         if(mList.size()==0){
-            pesan.setText("Data riwayat diagnosis bangunan masih kosong");
+            pesan.setVisibility(View.VISIBLE);
+            imgPesan.setVisibility(View.VISIBLE);
         }
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -173,6 +180,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        btn_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnTentang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TentangActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -233,8 +256,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateList() {
-        Cursor cursor = mSQLiteHelper.getData("SELECT id, nama_bangunan, jumlah_lantai, tahun, alamat_bangunan,latitude, " +
-                "longitude, nama, alamat, nomor_hp FROM data_bangunan ORDER BY id DESC");
+        Cursor cursor = mSQLiteHelper.getData("SELECT id, nama_bangunan, jumlah_lantai, tahun, alamat_bangunan, " +
+                "nama, alamat, nomor_hp FROM data_bangunan ORDER BY id DESC");
         mList.clear();
         while (cursor.moveToNext()){
             int id = cursor.getInt(0);
@@ -242,12 +265,12 @@ public class MainActivity extends AppCompatActivity {
             String lantai = cursor.getString(2);
             String thn = cursor.getString(3);
             String alamatB = cursor.getString(4);
-            String lati = cursor.getString(5);
-            String longi = cursor.getString(6);
+//            String lati = cursor.getString(5);
+//            String longi = cursor.getString(6);
 //            byte[] image = cursor.getBlob(7);
-            String nama = cursor.getString(7);
-            String alamat = cursor.getString(8);
-            String nomor = cursor.getString(9);
+            String nama = cursor.getString(5);
+            String alamat = cursor.getString(6);
+            String nomor = cursor.getString(7);
         }
         mAdapter.notifyDataSetChanged();
     }

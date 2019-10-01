@@ -11,9 +11,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
 
 public class HasilDiagnosisActivity extends AppCompatActivity {
 
@@ -21,7 +24,8 @@ public class HasilDiagnosisActivity extends AppCompatActivity {
     String level;
     double persen;
     TextView nama_bangunan;
-    TextView hasil_diagnosis;
+    Button hasil_diagnosis;
+    TextView persen_diagnosis;
     TextView keterangan;
     ImageView gambar_bangunan,close;
     byte[] image;
@@ -40,6 +44,7 @@ public class HasilDiagnosisActivity extends AppCompatActivity {
 
         nama_bangunan = findViewById(R.id.nama_bangunan_txt2);
         hasil_diagnosis = findViewById(R.id.hasil_diagnosis_txt);
+        persen_diagnosis = findViewById(R.id.persen_diagnosis_txt);
         keterangan = findViewById(R.id.keterangan_txt);
         gambar_bangunan = findViewById(R.id.poto_bangunan3);
         close = findViewById(R.id.close_diagnosis);
@@ -47,8 +52,7 @@ public class HasilDiagnosisActivity extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(HasilDiagnosisActivity.this,MainActivity.class);
-                startActivity(i);
+                onBackPressed();
             }
         });
 
@@ -152,36 +156,49 @@ public class HasilDiagnosisActivity extends AppCompatActivity {
         b_rusak_b.setText(jb_b+"");
 
         d_rusak_r.setText(jd_r+"");
-        d_rusak_s.setText(jb_s+"");
-        d_rusak_b.setText(jb_b+"");
+        d_rusak_s.setText(jd_s+"");
+        d_rusak_b.setText(jd_b+"");
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        double persen2 = persen*100;
 
 
         if(level.equals("1")){
             hasil_diagnosis.setText("Rusak Ringan");
-            keterangan.setText("Kerusakan adalah rusak ringan dengan probabilitas "+persen);
+            keterangan.setText("Kerusakan adalah rusak ringan dengan probabilitas "+persen+" atau bila dipresentasekan: "+df.format(persen2)+"%");
         }
         else if(level.equals("2")){
             hasil_diagnosis.setText("Rusak sedang");
-            keterangan.setText("Kerusakan adalah rusak sedang dengan probabilitas "+persen);
+            keterangan.setText("Kerusakan adalah rusak sedang dengan probabilitas "+persen+" atau bila dipresentasekan: "+df.format(persen2)+"%");
         }
         else if(level.equals("3")){
             hasil_diagnosis.setText("Rusak Berat");
-            keterangan.setText("Kerusakan adalah rusak berat dengan probabilitas "+persen);
+            keterangan.setText("Kerusakan adalah rusak berat dengan probabilitas "+persen+" atau bila dipresentasekan: "+df.format(persen2)+"%");
         }
         else if(level.equals("12")){
-            hasil_diagnosis.setText("Rusak Ringan/Sedang");
-            keterangan.setText("Kerusakan adalah rusak ringan dan sedang dengan probabilitas "+persen);
+            hasil_diagnosis.setText("Rusak Ringan, Sedang");
+            keterangan.setText("Kerusakan adalah rusak ringan dan sedang dengan probabilitas "+persen+" atau bila dipresentasekan: "+df.format(persen2)+"%");
         }
         else if(level.equals("23")) {
-            hasil_diagnosis.setText("Rusak Sedang/Berat");
-            keterangan.setText("Kerusakan adalah rusak sedang dan berat dengan probabilitas "+persen);
+            hasil_diagnosis.setText("Rusak Sedang, Berat");
+            keterangan.setText("Kerusakan adalah rusak sedang dan berat dengan probabilitas "+persen+" atau bila dipresentasekan: "+df.format(persen2)+"%");
         }
+
+        persen_diagnosis.setText(df.format(persen2)+"%");
 
         gambar_bangunan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewDialog alert = new ViewDialog();
                 alert.showDialog(HasilDiagnosisActivity.this);
+            }
+        });
+
+        hasil_diagnosis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(HasilDiagnosisActivity.this, InfoActivity.class);
+                startActivity(i);
             }
         });
     }

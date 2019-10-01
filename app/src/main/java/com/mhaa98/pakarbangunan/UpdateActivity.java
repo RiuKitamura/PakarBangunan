@@ -59,8 +59,8 @@ public class UpdateActivity extends AppCompatActivity {
         final EditText edtLantai = findViewById(R.id.up_jml_lantai);
         final EditText edtThn = findViewById(R.id.up_thn_dibuat);
         final EditText edtAlamatB = findViewById(R.id.up_alamat_bangunan);
-        final EditText edtLati = findViewById(R.id.up_latitude);
-        final EditText edtLongi = findViewById(R.id.up_longitude);
+//        final EditText edtLati = findViewById(R.id.up_latitude);
+//        final EditText edtLongi = findViewById(R.id.up_longitude);
         final EditText edtNama = findViewById(R.id.up_nama_person);
         final EditText edtAlamat = findViewById(R.id.up_alamat_person);
         final EditText edtNomor = findViewById(R.id.up_nomor_person);
@@ -86,19 +86,19 @@ public class UpdateActivity extends AppCompatActivity {
             String lantai = cursor.getString(2);
             String thn = cursor.getString(3);
             String alamat_b = cursor.getString(4);
-            String lati = cursor.getString(5);
-            String longi = cursor.getString(6);
-            byte[] poto = cursor.getBlob(7);
-            String nama = cursor.getString(8);
-            String alamat = cursor.getString(9);
-            String nomor = cursor.getString(10);
+//            String lati = cursor.getString(5);
+//            String longi = cursor.getString(6);
+            byte[] poto = cursor.getBlob(5);
+            String nama = cursor.getString(6);
+            String alamat = cursor.getString(7);
+            String nomor = cursor.getString(8);
 
             System.out.println("nama b "+nama_b);
             System.out.println("lantai:" +lantai);
             System.out.println("tahun "+thn);
             System.out.println("alamat b "+alamat);
-            System.out.println("lati "+lati);
-            System.out.println("longi "+longi);
+//            System.out.println("lati "+lati);
+//            System.out.println("longi "+longi);
             System.out.println("nama "+nama);
             System.out.println("alamat "+alamat);
             System.out.println("nomor "+nomor);
@@ -107,8 +107,8 @@ public class UpdateActivity extends AppCompatActivity {
             edtLantai.setText(lantai);
             edtThn.setText(thn);
             edtAlamatB.setText(alamat_b);
-            edtLati.setText(lati);
-            edtLongi.setText(longi);
+//            edtLati.setText(lati);
+//            edtLongi.setText(longi);
             imageViewIcon.setImageBitmap(BitmapFactory.decodeByteArray(poto,0,poto.length));
             edtNama.setText(nama);
             edtAlamat.setText(alamat);
@@ -116,7 +116,7 @@ public class UpdateActivity extends AppCompatActivity {
 
             getSupportActionBar().setTitle(nama_b);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            mList.add(new Model(id, nama_b, lantai, thn, alamat_b,lati, longi, poto, nama, alamat, nomor));
+            mList.add(new Model(id, nama_b, lantai, thn, alamat_b, poto, nama, alamat, nomor));
 
 
 
@@ -135,8 +135,8 @@ public class UpdateActivity extends AppCompatActivity {
                                 edtLantai.getText().toString().trim(),
                                 edtThn.getText().toString().trim(),
                                 edtAlamatB.getText().toString().trim(),
-                                edtLati.getText().toString().trim(),
-                                edtLongi.getText().toString().trim(),
+//                                edtLati.getText().toString().trim(),
+//                                edtLongi.getText().toString().trim(),
                                 imageViewToByte(imageViewIcon),
                                 edtNama.getText().toString().trim(),
                                 edtAlamat.getText().toString().trim(),

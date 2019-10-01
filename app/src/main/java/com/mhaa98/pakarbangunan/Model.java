@@ -6,37 +6,37 @@ public class Model {
     private String lantai;
     private String thn;
     private String alamat_b;
-    private String lati;
-    private String longi;
+//    private String lati;
+//    private String longi;
     private byte[] poto;
     private String nama;
     private String alamat;
     private String hp;
     private double kepercayaan;
 
-    public Model(int id, String nama_b, String lantai, String thn, String alamat_b, String lati,
-                 String longi, byte[] poto, String nama, String alamat, String hp){
+    public Model(int id, String nama_b, String lantai, String thn, String alamat_b,
+                 byte[] poto, String nama, String alamat, String hp){
         this.id = id;
         this.nama_b = nama_b;
         this.lantai = lantai;
         this.thn = thn;
         this.alamat_b = alamat_b;
-        this.lati = lati;
-        this.longi = longi;
+//        this.lati = lati;
+//        this.longi = longi;
         this.poto = poto;
         this.nama = nama;
         this.alamat = alamat;
         this.hp = hp;
     }
-    public Model(int id, String nama_b, String lantai, String thn, String alamat_b, String lati,
-                 String longi, String nama, String alamat, String hp, double kepercayaan){
+    public Model(int id, String nama_b, String lantai, String thn, String alamat_b,
+                 String nama, String alamat, String hp, double kepercayaan){
         this.id = id;
         this.nama_b = nama_b;
         this.lantai = lantai;
         this.thn = thn;
         this.alamat_b = alamat_b;
-        this.lati = lati;
-        this.longi = longi;
+//        this.lati = lati;
+//        this.longi = longi;
         this.nama = nama;
         this.alamat = alamat;
         this.hp = hp;
@@ -91,21 +91,21 @@ public class Model {
         this.alamat_b = alamat_b;
     }
 
-    public String getLati() {
-        return lati;
-    }
-
-    public void setLati(String lati) {
-        this.lati = lati;
-    }
-
-    public String getLongi() {
-        return longi;
-    }
-
-    public void setLongi(String longi) {
-        this.longi = longi;
-    }
+//    public String getLati() {
+//        return lati;
+//    }
+//
+//    public void setLati(String lati) {
+//        this.lati = lati;
+//    }
+//
+//    public String getLongi() {
+//        return longi;
+//    }
+//
+//    public void setLongi(String longi) {
+//        this.longi = longi;
+//    }
 
     public byte[] getPoto() {
         return poto;

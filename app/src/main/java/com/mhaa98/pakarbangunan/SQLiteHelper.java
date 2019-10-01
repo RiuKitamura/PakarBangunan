@@ -16,11 +16,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(sql);
     }
 
-    public void insertData(String namaB, String lantai, String thn, String alamatB, String lati,
-                           String longi, byte[] image, String nama, String alamat, String hp){
+    public void insertData(String namaB, String lantai, String thn, String alamatB, byte[] image, String nama, String alamat, String hp){
         SQLiteDatabase database = getWritableDatabase();
 
-        String sql = "INSERT INTO data_bangunan VALUES(NULL,?,?,?,?,?,?,?,?,?,?,null,null)";
+        String sql = "INSERT INTO data_bangunan VALUES(NULL,?,?,?,?,?,?,?,?,null,null)";
 
         SQLiteStatement statement = database.compileStatement(sql);
         statement.clearBindings();
@@ -29,12 +28,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         statement.bindString(2,lantai);
         statement.bindString(3,thn);
         statement.bindString(4,alamatB);
-        statement.bindString(5,lati);
-        statement.bindString(6,longi);
-        statement.bindBlob(7,image);
-        statement.bindString(8,nama);
-        statement.bindString(9,alamat);
-        statement.bindString(10,hp);
+        statement.bindBlob(5,image);
+        statement.bindString(6,nama);
+        statement.bindString(7,alamat);
+        statement.bindString(8,hp);
 
         statement.executeInsert();
 
@@ -78,10 +75,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void insertLevel(){
         SQLiteDatabase database = getWritableDatabase();
         String sql = "INSERT INTO ds_level VALUES" +
-                "(0,'Tidak Rusak', 'Bangunan tidak mengalami kerusakan'), " +
-                "(1,'Rusak Ringan', 'Bangunan masih aman unuk dimasuki'), " +
-                "(2,'Rusak Sedang', 'Bangunan masih bisa unuk dimasuki tapi harus dilakukan perbaikan'), " +
-                "(3,'Rusak Berat', 'Bangunan tidak aman unuk dimasuki')";
+                "(0,'Tidak Rusak','Bangunan tidak rusak', 'Bangunan tidak mengalami kerusakan'), " +
+                "(1,'Rusak Ringan','Dinding retak halus, kerusakan tidak tembus,plesteranterkelupas.Plafon dan listplang rusak, tidak ada kerusakan struktural.', 'Bangunan tidak perlu dikosongkan, hanya perlu perbaikan kosmetik secara arsitektur agar daya tahan bangunan tetap terpelihara'), " +
+                "(2,'Rusak Sedang','Dinding partisi retak tembus atau roboh sebagian, Bagian struktur (kolom, balok, kuda-kuda) mengalami kerusakan tetapi masihdapatdiperbaiki.Dindingstruktural (bangunan tanpa kolom dan balok) mengalami kerusakan yang masih dapat diperbaiki', 'Bangunan perlu dikosongkan dan boleh dihuni kembali setelah dilakukan perbaikan dan perkuatan untuk dapat menahan beban gempa.'), " +
+                "(3,'Rusak Berat','Dinding partisi retak tembus atau roboh sebagian, Bagian struktur (kolom, balok, kuda-kuda) mengalami kerusakan tetapi masihdapatdiperbaiki.Dindingstruktural (bangunan tanpa kolom dan balok) mengalami kerusakan yang masih dapat diperbaiki.', 'Bangunan harus dikosongkan atau dirobohkan ')";
         SQLiteStatement statement = database.compileStatement(sql);
         statement.execute();
         database.close();
@@ -90,44 +87,38 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void insertRules(){
         SQLiteDatabase database = getWritableDatabase();
         String sql = "INSERT INTO ds_rules VALUES" +
-                "(1, 1, 0.30), " +
-                "(1, 2, 0.60), " +
-                "(2, 2, 0.60), " +
-                "(2, 3, 0.80), " +
-                "(1, 4, 0.35), " +
-                "(2, 4, 0.35), " +
-                "(2, 5, 0.65), " +
-                "(2, 6, 0.90), " +
-                "(2, 7, 0.40), " +
-                "(3, 7, 0.40), " +
-                "(3, 8, 0.70), " +
-                "(3, 9, 0.95), " +
-                "(1, 10, 0.30), " +
-                "(1, 11, 0.45), " +
-                "(2, 11, 0.45), " +
-                "(2, 12, 0.65), " +
-                "(1, 13, 0.35), " +
-                "(2, 13, 0.35), " +
-                "(2, 14, 0.60), " +
-                "(2, 15, 0.80), " +
-                "(2, 16, 0.35), " +
-                "(3, 16, 0.35), " +
-                "(3, 17, 0.65), " +
-                "(3, 18, 0.85), " +
+                "(1, 1, 0.70), " +
+                "(1, 2, 0.80), " +
+                "(1, 3, 0.85), " +
+                "(1, 4, 0.75), " +
+                "(2, 4, 0.75), " +
+                "(2, 5, 0.88), " +
+                "(2, 6, 0.95), " +
+                "(3, 7, 1), " +
+                "(3, 8, 1), " +
+                "(3, 9, 1), " +
+                "(1, 10, 0.70), " +
+                "(1, 11, 0.75), " +
+                "(2, 12, 0.80), " +
+                "(1, 13, 0.75), " +
+                "(2, 13, 0.75), " +
+                "(2, 14, 0.80), " +
+                "(2, 15, 0.85), " +
+                "(2, 16, 0.80), " +
+                "(3, 16, 0.80), " +
+                "(3, 17, 0.85), " +
+                "(3, 18, 0.90), " +
                 "(1, 19, 0.30), " +
-                "(1, 20, 0.45), " +
-                "(1, 21, 0.65), " +
-                "(2, 21, 0.65), " +
-                "(1, 22, 0.30), " +
-                "(1, 23, 0.55), " +
-                "(2, 23, 0.55), " +
-                "(2, 24, 0.65), " +
-                "(1, 25, 0.35), " +
-                "(2, 25, 0.35), " +
-                "(1, 26, 0.55), " +
-                "(2, 26, 0.55), " +
-                "(2, 27, 0.68), " +
-                "(3, 27, 0.68) ";
+                "(1, 20, 0.50), " +
+                "(1, 21, 0.70), " +
+                "(1, 22, 0.60), " +
+                "(2, 22, 0.60), " +
+                "(1, 23, 0.70), " +
+                "(2, 23, 0.70), " +
+                "(2, 24, 0.75), " +
+                "(2, 25, 0.70), " +
+                "(2, 26, 0.75), " +
+                "(2, 27, 0.80) ";
         SQLiteStatement statement = database.compileStatement(sql);
         statement.execute();
         database.close();
@@ -174,13 +165,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         statement.executeInsert();
     }
 
-    public void updateData(String namaB, String lantai, String thn, String alamatB, String lati,
-                           String longi, byte[] image, String nama, String alamat, String hp, int id){
+    public void updateData(String namaB, String lantai, String thn, String alamatB,
+                           byte[] image, String nama, String alamat, String hp, int id){
 
         SQLiteDatabase database = getWritableDatabase();
 
         String  sql = "UPDATE data_bangunan SET nama_bangunan = ?, jumlah_lantai = ?, tahun = ?," +
-                "alamat_bangunan = ?, latitude = ?, longitude = ?, poto = ?, nama = ?, alamat = ?, " +
+                "alamat_bangunan = ?, poto = ?, nama = ?, alamat = ?, " +
                 "nomor_hp = ? WHERE id = ?";
 
         SQLiteStatement statement = database.compileStatement(sql);
@@ -189,13 +180,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         statement.bindString(2,lantai);
         statement.bindString(3,thn);
         statement.bindString(4,alamatB);
-        statement.bindString(5,lati);
-        statement.bindString(6,longi);
-        statement.bindBlob(7,image);
-        statement.bindString(8,nama);
-        statement.bindString(9,alamat);
-        statement.bindString(10,hp);
-        statement.bindDouble(11, (double)id);
+//        statement.bindString(5,lati);
+//        statement.bindString(6,longi);
+        statement.bindBlob(5,image);
+        statement.bindString(6,nama);
+        statement.bindString(7,alamat);
+        statement.bindString(8,hp);
+        statement.bindDouble(9, (double)id);
 
         statement.execute();
         database.close();

@@ -22,7 +22,7 @@ import android.widget.Toast;
 public class DiagnosisActivity extends AppCompatActivity {
 
     Button diagnosis;
-    ImageView imageViewIcon;
+    ImageView imageViewIcon,close;
     RelativeLayout kolom, balok, dinding;
 
     ListView mListView;
@@ -53,10 +53,11 @@ public class DiagnosisActivity extends AppCompatActivity {
         dinding = findViewById(R.id.dinding_btn);
 
         diagnosis = findViewById(R.id.diagnosis_btn);
+        close = findViewById(R.id.close_diagnosis2);
 
 
-        getSupportActionBar().setTitle("Kondisi Bangunan");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setTitle("Kondisi Bangunan");
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         kode = getIntent().getExtras().getInt("id");
         refreshText(kode);
@@ -113,6 +114,12 @@ public class DiagnosisActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 diagnosis(kode);
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
     }
@@ -255,6 +262,11 @@ public class DiagnosisActivity extends AppCompatActivity {
         }
         return false;
     }
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(DiagnosisActivity.this,MainActivity.class);
+        startActivity(i);
+    }
 
     void moveToKondisiKolom(final int id, final int a){
         Intent i = new Intent(this, KondisiStruktur.class);
@@ -273,189 +285,240 @@ public class DiagnosisActivity extends AppCompatActivity {
         System.out.println("resume");
     }
 
+    public String ambilDataLevel(int idGejala) {
+        String tmpLevel="";
+        Cursor cursor = MainActivity.mSQLiteHelper.getData("SELECT level FROM ds_rules WHERE gejala="+idGejala);
+        while (cursor.moveToNext()){
+            tmpLevel+=cursor.getInt(0);
+        }
+        return tmpLevel;
+    }
+
+    public double ambilDataKepercayaan (int idGejala) {
+        double tmpBelief = 0;
+        int tmpJum = 0;
+        Cursor cursor = MainActivity.mSQLiteHelper.getData("SELECT cf FROM ds_rules WHERE gejala="+idGejala);
+        while (cursor.moveToNext()){
+            tmpBelief+=cursor.getDouble(0);
+            tmpJum++;
+        }
+
+        return tmpBelief/tmpJum;
+    }
+
     public void diagnosis(int kode){
         int i = 0;
         int jum_min=0;
         //int[] gejala_terpilih = new int[jum_gejala];
         String[] level_rusak = new String[jum_gejala];
         double[] belief = new double[jum_gejala];
+        int[] gejala = new int[jum_gejala];
         if(jum_kolom!=0){
             if(persen_kolom_rusak_ringan > 0 && persen_kolom_rusak_ringan<20){
-                level_rusak[i]="1";
-                belief[i]=0.30;
+                level_rusak[i]=ambilDataLevel(1);
+                belief[i]=ambilDataKepercayaan(1);
+                gejala[i]=1;
                 jum_min++;
                 i++;
             }
             else if(persen_kolom_rusak_ringan >= 20 && persen_kolom_rusak_ringan<50){
-                level_rusak[i]="12";
-                belief[i]=0.60;
+                level_rusak[i]=ambilDataLevel(2);
+                belief[i]=ambilDataKepercayaan(2);
+                gejala[i]=2;
                 jum_min++;
                 i++;
             }
             else if(persen_kolom_rusak_ringan >= 50){
-                //gejala_terpilih[i]=1;
-                level_rusak[i]="2";
-                belief[i]=0.80;
+                level_rusak[i]=ambilDataLevel(3);
+                belief[i]=ambilDataKepercayaan(3);
+                gejala[i]=3;
                 jum_min++;
                 i++;
             }
 
             if(persen_kolom_rusak_sedang > 0 && persen_kolom_rusak_sedang<20){
-                level_rusak[i]="12";
-                belief[i]=0.35;
+                level_rusak[i]=ambilDataLevel(4);
+                belief[i]=ambilDataKepercayaan(4);
+                gejala[i]=4;
                 jum_min++;
                 i++;
             }
             else if(persen_kolom_rusak_sedang >= 20 && persen_kolom_rusak_sedang<50){
-                level_rusak[i]="2";
-                belief[i]=0.65;
+                level_rusak[i]=ambilDataLevel(5);
+                belief[i]=ambilDataKepercayaan(5);
+                gejala[i]=5;
                 jum_min++;
                 i++;
             }
             else if(persen_kolom_rusak_sedang >= 50){
-                //gejala_terpilih[i]=1;
-                level_rusak[i]="2";
-                belief[i]=0.90;
+                level_rusak[i]=ambilDataLevel(6);
+                belief[i]=ambilDataKepercayaan(6);
+                gejala[i]=6;
                 jum_min++;
                 i++;
             }
 
             if(persen_kolom_rusak_berat > 0 && persen_kolom_rusak_berat<20){
-                level_rusak[i]="23";
-                belief[i]=0.40;
+                level_rusak[i]=ambilDataLevel(7);
+                belief[i]=ambilDataKepercayaan(7);
+                gejala[i]=7;
                 jum_min++;
                 i++;
             }
             else if(persen_kolom_rusak_berat >= 20 && persen_kolom_rusak_berat<50){
-                level_rusak[i]="3";
-                belief[i]=0.70;
+                level_rusak[i]=ambilDataLevel(8);
+                belief[i]=ambilDataKepercayaan(8);
+                gejala[i]=8;
                 jum_min++;
                 i++;
             }
             else if(persen_kolom_rusak_berat >= 50){
-                //gejala_terpilih[i]=1;
-                level_rusak[i]="3";
-                belief[i]=0.95;
+                level_rusak[i]=ambilDataLevel(9);
+                belief[i]=ambilDataKepercayaan(9);
+                gejala[i]=9;
                 jum_min++;
                 i++;
             }
         }
         if(jum_balok!=0){
             if(persen_balok_rusak_ringan>0 && persen_balok_rusak_ringan<20){
-                level_rusak[i]="1";
-                belief[i]=0.30;
+                level_rusak[i]=ambilDataLevel(10);
+                belief[i]=ambilDataKepercayaan(10);
+                gejala[i]=10;
                 jum_min++;
                 i++;
             }
             else if(persen_balok_rusak_ringan>=20 && persen_balok_rusak_ringan<50){
-                level_rusak[i]="12";
-                belief[i]=0.45;
+                level_rusak[i]=ambilDataLevel(11);
+                belief[i]=ambilDataKepercayaan(11);
+                gejala[i]=11;
                 jum_min++;
                 i++;
             }
             else if(persen_balok_rusak_ringan>= 50){
-                level_rusak[i]="2";
-                belief[i]=0.65;
+                level_rusak[i]=ambilDataLevel(12);
+                belief[i]=ambilDataKepercayaan(12);
+                gejala[i]=12;
                 jum_min++;
                 i++;
             }
 
             if(persen_balok_rusak_sedang>0 && persen_balok_rusak_sedang<20){
-                level_rusak[i]="12";
-                belief[i]=0.35;
+                level_rusak[i]=ambilDataLevel(13);
+                belief[i]=ambilDataKepercayaan(13);
+                gejala[i]=13;
                 jum_min++;
                 i++;
             }
             else if(persen_balok_rusak_sedang>=20 && persen_balok_rusak_sedang<50){
-                level_rusak[i]="2";
-                belief[i]=0.60;
+                level_rusak[i]=ambilDataLevel(14);
+                belief[i]=ambilDataKepercayaan(14);
+                gejala[i]=14;
                 jum_min++;
                 i++;
             }
             else if(persen_balok_rusak_sedang>= 50){
-                level_rusak[i]="2";
-                belief[i]=0.80;
+                level_rusak[i]=ambilDataLevel(15);
+                belief[i]=ambilDataKepercayaan(15);
+                gejala[i]=15;
                 jum_min++;
                 i++;
             }
 
             if(persen_balok_rusak_berat>0 && persen_balok_rusak_berat<20){
-                level_rusak[i]="23";
-                belief[i]=0.35;
+                level_rusak[i]=ambilDataLevel(16);
+                belief[i]=ambilDataKepercayaan(16);
+                gejala[i]=16;
                 jum_min++;
                 i++;
             }
             else if(persen_balok_rusak_berat>=20 && persen_balok_rusak_berat<50){
-                level_rusak[i]="3";
-                belief[i]=0.65;
+                level_rusak[i]=ambilDataLevel(17);
+                belief[i]=ambilDataKepercayaan(17);
+                gejala[i]=17;
                 jum_min++;
                 i++;
             }
             else if(persen_balok_rusak_berat>= 50){
-                level_rusak[i]="3";
-                belief[i]=0.85;
+                level_rusak[i]=ambilDataLevel(18);
+                belief[i]=ambilDataKepercayaan(18);
+                gejala[i]=18;
                 jum_min++;
                 i++;
             }
         }
         if(jum_dinding!=0){
             if(persen_dinding_rusak_ringan>0 && persen_dinding_rusak_ringan<20){
-                level_rusak[i]="1";
-                belief[i]=0.30;
+                level_rusak[i]=ambilDataLevel(19);
+                belief[i]=ambilDataKepercayaan(19);
+                gejala[i]=19;
                 jum_min++;
                 i++;
             }
             else if(persen_dinding_rusak_ringan>=20 && persen_dinding_rusak_ringan<50){
-                level_rusak[i]="1";
-                belief[i]=0.45;
+                level_rusak[i]=ambilDataLevel(20);
+                belief[i]=ambilDataKepercayaan(20);
+                gejala[i]=20;
                 jum_min++;
                 i++;
             }
             else if(persen_dinding_rusak_ringan>= 50){
-                level_rusak[i]="12";
-                belief[i]=0.65;
+                level_rusak[i]=ambilDataLevel(21);
+                belief[i]=ambilDataKepercayaan(21);
+                gejala[i]=21;
                 jum_min++;
                 i++;
             }
 
             if(persen_dinding_rusak_sedang>0 && persen_dinding_rusak_sedang<20){
-                level_rusak[i]="1";
-                belief[i]=0.30;
+                level_rusak[i]=ambilDataLevel(22);
+                belief[i]=ambilDataKepercayaan(22);
+                gejala[i]=22;
                 jum_min++;
                 i++;
             }
             else if(persen_dinding_rusak_sedang>=20 && persen_dinding_rusak_sedang<50){
-                level_rusak[i]="12";
-                belief[i]=0.55;
+                level_rusak[i]=ambilDataLevel(23);
+                belief[i]=ambilDataKepercayaan(23);
+                gejala[i]=23;
                 jum_min++;
                 i++;
             }
             else if(persen_dinding_rusak_sedang>= 50){
-                level_rusak[i]="2";
-                belief[i]=0.65;
+                level_rusak[i]=ambilDataLevel(24);
+                belief[i]=ambilDataKepercayaan(24);
+                gejala[i]=24;
                 jum_min++;
                 i++;
             }
 
             if(persen_dinding_rusak_berat>0 && persen_dinding_rusak_berat<20){
-                level_rusak[i]="12";
-                belief[i]=0.35;
+                level_rusak[i]=ambilDataLevel(25);
+                belief[i]=ambilDataKepercayaan(25);
+                gejala[i]=25;
                 jum_min++;
                 i++;
             }
             else if(persen_dinding_rusak_berat>=20 && persen_dinding_rusak_berat<50){
-                level_rusak[i]="12";
-                belief[i]=0.55;
+                level_rusak[i]=ambilDataLevel(26);
+                belief[i]=ambilDataKepercayaan(26);
+                gejala[i]=26;
                 jum_min++;
                 i++;
             }
             else if(persen_dinding_rusak_berat>= 50){
-                level_rusak[i]="23";
-                belief[i]=0.68;
+                level_rusak[i]=ambilDataLevel(27);
+                belief[i]=ambilDataKepercayaan(27);
+                gejala[i]=27;
                 jum_min++;
                 i++;
             }
         }
+        System.out.println("daftar gejalaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        for (int a=0;a<level_rusak.length;a++){
+            System.out.println(gejala[a]+": "+level_rusak[a]+" -> "+belief[a]);
+        }
+
         if(jum_min>=2){
             double[] m1,m2;
             String[] mm1,mm2;
@@ -711,7 +774,7 @@ public class DiagnosisActivity extends AppCompatActivity {
             startActivity(n);
         }
         else{
-            Toast.makeText(this, "Data tidak lengkap", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Data struktur tidak lengkap", Toast.LENGTH_SHORT).show();
         }
 
 

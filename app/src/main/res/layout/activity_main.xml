@@ -15,44 +15,71 @@
         android:paddingRight="20dp"
         android:padding="20dp">
         <TextView
+            android:id="@+id/btn_tentang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:layout_centerVertical="true"
             android:textSize="20dp"
             android:textColor="@color/colorPrimaryDark"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:orientation="horizontal"
+
+        <Button
+            android:id="@+id/ll_info"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:background="@drawable/circle_btn_bg"
-            android:padding="5dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Info"
-                android:textColor="@color/colorWhite"
-                android:layout_gravity="center"
-                android:layout_marginRight="2dp"
-                android:layout_marginLeft="10dp"/>
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/info_icon"
-                android:layout_gravity="center"
-                android:background="@null"/>
+            android:text="Info"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"/>
 
-        </LinearLayout>
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/ll_info"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:background="@drawable/circle_btn_bg"-->
+            <!--android:padding="5dp">-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Info"-->
+                <!--android:textColor="@color/colorWhite"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginRight="2dp"-->
+                <!--android:layout_marginLeft="10dp"/>-->
+            <!--<ImageButton-->
+                <!--android:layout_width="30dp"-->
+                <!--android:layout_height="30dp"-->
+                <!--android:src="@drawable/info_icon"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:background="@null"/>-->
+
+        <!--</LinearLayout>-->
 
     </RelativeLayout>
-    <TextView
-        android:id="@+id/pesan"
+    <ImageView
+        android:id="@+id/pesan_img"
         android:layout_below="@id/ley"
         android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/ic_undraw_empty_xct9"
+        android:scaleType="fitCenter"/>
+    <TextView
+        android:id="@+id/pesan"
+        android:layout_below="@id/pesan_img"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginVertical="20dp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:text="Data riwayat diagnosis bangunan\nmasih kosong"/>
     <ListView
         android:id="@+id/list1"
         android:layout_width="match_parent"
@@ -68,10 +95,10 @@
         android:id="@+id/add_btn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Diagnosis"
+        android:text="Tambah data Diagnosis!"
         android:textColor="@color/colorWhite"
         android:textAllCaps="false"
-        android:textSize="20dp"
+        android:textSize="16sp"
         android:background="@drawable/button_bg"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"

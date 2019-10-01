@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -44,7 +45,8 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class FormActivity extends AppCompatActivity implements LocationListener {
 
-    EditText nama_bg, lantai, tahun, alamat_bg, lati, longi, nama, alamat, no_hp;
+    EditText nama_bg, lantai, tahun, alamat_bg, nama, alamat, no_hp;
+//    EditText lati, longi;
     ImageView poto;
     Button next;
 
@@ -54,7 +56,7 @@ public class FormActivity extends AppCompatActivity implements LocationListener 
 
     boolean isi_gambar;
     LocationManager locationManager;
-    ImageButton gps;
+//    ImageButton gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,21 +72,21 @@ public class FormActivity extends AppCompatActivity implements LocationListener 
 
         checkPermision();
 
-        gps = findViewById(R.id.location_btn);
-        gps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getLocation();
-
-            }
-        });
+//        gps = findViewById(R.id.location_btn);
+//        gps.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getLocation();
+//
+//            }
+//        });
 
         nama_bg = (EditText) findViewById(R.id.nama_bangunan);
         lantai = (EditText) findViewById(R.id.jml_lantai);
         tahun = (EditText) findViewById(R.id.thn_dibuat);
         alamat_bg = (EditText) findViewById(R.id.alamat_bangunan);
-        lati = (EditText) findViewById(R.id.latitude);
-        longi = (EditText) findViewById(R.id.longitude);
+//        lati = (EditText) findViewById(R.id.latitude);
+//        longi = (EditText) findViewById(R.id.longitude);
         poto = findViewById(R.id.add_photo_btn);
         nama = (EditText) findViewById(R.id.nama_person);
         alamat = (EditText) findViewById(R.id.alamat_person);
@@ -114,8 +116,8 @@ public class FormActivity extends AppCompatActivity implements LocationListener 
                         System.out.println("lantai:" + lantai.getText());
                         System.out.println("tahun " + tahun.getText());
                         System.out.println("alamat b " + alamat_bg.getText());
-                        System.out.println("lati " + lati.getText());
-                        System.out.println("longi " + longi.getText());
+//                        System.out.println("lati " + lati.getText());
+//                        System.out.println("longi " + longi.getText());
                         System.out.println("nama " + nama.getText());
                         System.out.println("alamat " + alamat.getText());
                         System.out.println("nomor " + no_hp.getText());
@@ -124,15 +126,25 @@ public class FormActivity extends AppCompatActivity implements LocationListener 
                                 lantai.getText().toString().trim(),
                                 tahun.getText().toString().trim(),
                                 alamat_bg.getText().toString().trim(),
-                                lati.getText().toString().trim(),
-                                longi.getText().toString().trim(),
+//                                lati.getText().toString().trim(),
+//                                longi.getText().toString().trim(),
                                 imageViewToByte(poto),
                                 nama.getText().toString().trim(),
                                 alamat.getText().toString().trim(),
                                 no_hp.getText().toString().trim()
                         );
                         Toast.makeText(FormActivity.this, "Sukses", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(FormActivity.this, MainActivity.class);
+                        Cursor c = MainActivity.mSQLiteHelper.getData("SELECT id FROM data_bangunan ORDER BY id DESC");
+                        int idTmp=0;
+                        while (c.moveToNext()){
+                            idTmp = c.getInt(0);
+                            break;
+                        }
+                        Intent i = new Intent(FormActivity.this, DiagnosisActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Bundle bun = new Bundle();
+                        bun.putInt("id", idTmp);
+                        i.putExtras(bun);
                         startActivity(i);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -272,27 +284,27 @@ public class FormActivity extends AppCompatActivity implements LocationListener 
     }
 
     //latitude longitude
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getLocation();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        getLocation();
+//    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        locationManager.removeUpdates(this);
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        locationManager.removeUpdates(this);
+//    }
 
-    public void getLocation() {
-        try{
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
-        } catch (SecurityException e){
-            e.printStackTrace();
-        }
-
-    }
+//    public void getLocation() {
+//        try{
+//            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+//        } catch (SecurityException e){
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public void checkPermision() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -302,10 +314,10 @@ public class FormActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
-        double longi2 = location.getLongitude();
-        double lati2 = location.getLatitude();
-        lati.setText(""+lati2);
-        longi.setText(""+longi2);
+//        double longi2 = location.getLongitude();
+//        double lati2 = location.getLatitude();
+//        lati.setText(""+lati2);
+//        longi.setText(""+longi2);
     }
 
     @Override

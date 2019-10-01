@@ -70,14 +70,27 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp" />
-                    <TextView
+                    <Button
                         android:id="@+id/hasil_diagnosis_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Hasil Diagnosis"
+                        android:textAllCaps="false"
                         android:layout_gravity="center"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="30dp"/>
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20dp"
+                        android:paddingHorizontal="16dp"
+                        android:background="@drawable/button_bg"/>
+
+                    <TextView
+                        android:id="@+id/persen_diagnosis_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hasil Diagnosis"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center"
+                        android:textSize="20dp"
+                        android:textStyle="bold"/>
 
 
                 </LinearLayout>

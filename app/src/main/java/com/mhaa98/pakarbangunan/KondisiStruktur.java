@@ -7,9 +7,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,11 +25,8 @@ public class KondisiStruktur extends AppCompatActivity {
     ListView mListView;
     ArrayList<Model2> mList;
     KondisiStrukturListAdapter mAdapter = null;
-    TextView info;
 
-    final int CAMERA_REQUEST_CODE1 = 1;
-    final int CAMERA_REQUEST_CODE2 = 0;
-    ImageButton add_kolom;
+    Button add_kolom;
     int kode, stuktur;
     String stuk;
 
@@ -35,31 +35,38 @@ public class KondisiStruktur extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kondisi_struktur);
 
-        Intent intent = getIntent();
-
         Bundle b = getIntent().getExtras();
 
         kode = b.getInt("id");
         stuktur = b.getInt("stuk");
         stuk="";
         System.out.println("ini "+kode+" dan "+stuktur);
+
+        add_kolom = findViewById(R.id.add_list_kolom);
+
         if(stuktur==1){
             getSupportActionBar().setTitle("Kondisi Kolom");
             stuk="Kolom";
+            add_kolom.setText("Tambah data Kolom");
         }
         else if(stuktur==2){
             getSupportActionBar().setTitle("Kondisi Balok");
             stuk="Balok";
+            add_kolom.setText("Tambah data Balok");
         }
         else if(stuktur==3){
             getSupportActionBar().setTitle("Kondisi Dinding");
             stuk="Dinding";
+            add_kolom.setText("Tambah data Dinding");
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mListView = findViewById(R.id.list_kolom);
         mList = new ArrayList<>();
         mAdapter = new KondisiStrukturListAdapter(this, R.layout.list_kerusakan_layout, mList);
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.header_list,mListView,false);
+        mListView.addHeaderView(header);
         mListView.setAdapter(mAdapter);
 
         Cursor cursor = MainActivity.mSQLiteHelper.getData("SELECT * FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id ASC");
@@ -74,21 +81,22 @@ public class KondisiStruktur extends AppCompatActivity {
 
         }
         mAdapter.notifyDataSetChanged();
-        info = findViewById(R.id.text1);
-        if(mList.size()==0){
-            info.setText("Data kerusakan "+ stuk +" masih kosong");
-        }
-        else{
-            info.setText("");
-        }
+//        if(mList.size()==0){
+//            info.setVisibility(View.VISIBLE);
+//            info.setText("Data kerusakan "+ stuk +" masih kosong silahkan tambahkan data terlebih dahulu");
+//            mListView.setVisibility(View.GONE);
+//        }
+//        else{
+//            info.setVisibility(View.GONE);
+//            mListView.setVisibility(View.VISIBLE);
+//        }
 
-        add_kolom = findViewById(R.id.add_list_kolom);
+
         add_kolom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                info.setText("");
                 if(stuktur==1){
-                    MainActivity.mSQLiteHelper.insertDataKerusakan(kode,1,1);
+                    MainActivity.mSQLiteHelper.insertDataKerusakan(kode,1,0);
                     Cursor cursor = MainActivity.mSQLiteHelper.getData("SELECT * FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id DESC");
                     while (cursor.moveToNext()){
                         int id = cursor.getInt(0);
@@ -99,10 +107,10 @@ public class KondisiStruktur extends AppCompatActivity {
                         mList.add(new Model2(id, id_bangunan,struktur,level));
                         break;
                     }
-                    Toast.makeText(KondisiStruktur.this, "+ 1 Kolom", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(KondisiStruktur.this, "Kolom telah ditambahkan", Toast.LENGTH_SHORT).show();
                 }
                 else if(stuktur==2){
-                    MainActivity.mSQLiteHelper.insertDataKerusakan(kode,2,1);
+                    MainActivity.mSQLiteHelper.insertDataKerusakan(kode,2,0);
                     Cursor cursor = MainActivity.mSQLiteHelper.getData("SELECT * FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id DESC");
                     while (cursor.moveToNext()){
                         int id = cursor.getInt(0);
@@ -113,11 +121,11 @@ public class KondisiStruktur extends AppCompatActivity {
                         mList.add(new Model2(id, id_bangunan,struktur,level));
                         break;
                     }
-                    Toast.makeText(KondisiStruktur.this, "+ 1 Balok", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(KondisiStruktur.this, "Balok telah ditambahkan", Toast.LENGTH_SHORT).show();
                 }
                 else if(stuktur==3){
-                    MainActivity.mSQLiteHelper.insertDataKerusakan(kode,3,1);
-                    Toast.makeText(KondisiStruktur.this, "+ 1 Dinding", Toast.LENGTH_SHORT).show();
+                    MainActivity.mSQLiteHelper.insertDataKerusakan(kode,3,0);
+                    Toast.makeText(KondisiStruktur.this, "Dinding telah ditambahkan", Toast.LENGTH_SHORT).show();
                     Cursor cursor = MainActivity.mSQLiteHelper.getData("SELECT * FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id DESC");
                     while (cursor.moveToNext()){
                         int id = cursor.getInt(0);
@@ -130,33 +138,28 @@ public class KondisiStruktur extends AppCompatActivity {
                     }
                 }
                 mAdapter.notifyDataSetChanged();
-//                finish();
-//                overridePendingTransition(0, 0);
-//                startActivity(getIntent());
-//                overridePendingTransition(0, 0);
+
             }
         });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                CharSequence[] items = {"Rusak Ringan", "Rusak Sedang", "Rusak Berat"};
+                CharSequence[] items = {"Tidak Rusak","Rusak Ringan", "Rusak Sedang", "Rusak Berat"};
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(KondisiStruktur.this);
 
-                dialog.setTitle("Level Kerusakan");
+                dialog.setTitle("Level Kerusakan:");
                 dialog.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0){
+                        if(which == 0){
                             Cursor c = MainActivity.mSQLiteHelper.getData("SELECT id FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id ASC");
                             ArrayList<Integer> arrID = new ArrayList<Integer>();
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
                             }
-                            moveToUpdate(position,arrID.get(position), 1);
-
-                            //showDialogUpdate(MainActivity.this, arrID.get(position));
+                            moveToUpdate(position-1,arrID.get(position-1), 0);
                         }
                         if (which == 1){
                             Cursor c = MainActivity.mSQLiteHelper.getData("SELECT id FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id ASC");
@@ -164,7 +167,7 @@ public class KondisiStruktur extends AppCompatActivity {
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
                             }
-                            moveToUpdate(position,arrID.get(position), 2);
+                            moveToUpdate(position-1,arrID.get(position-1), 1);
 
                             //showDialogUpdate(MainActivity.this, arrID.get(position));
                         }
@@ -174,7 +177,17 @@ public class KondisiStruktur extends AppCompatActivity {
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
                             }
-                            moveToUpdate(position,arrID.get(position), 3);
+                            moveToUpdate(position-1,arrID.get(position-1), 2);
+
+                            //showDialogUpdate(MainActivity.this, arrID.get(position));
+                        }
+                        if (which == 3){
+                            Cursor c = MainActivity.mSQLiteHelper.getData("SELECT id FROM data_kerusakan WHERE id_bangunan="+kode+" AND struktur="+stuktur+" ORDER BY id ASC");
+                            ArrayList<Integer> arrID = new ArrayList<Integer>();
+                            while (c.moveToNext()){
+                                arrID.add(c.getInt(0));
+                            }
+                            moveToUpdate(position-1,arrID.get(position-1), 3);
 
                             //showDialogUpdate(MainActivity.this, arrID.get(position));
                         }
@@ -201,8 +214,8 @@ public class KondisiStruktur extends AppCompatActivity {
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
                             }
-                            Toast.makeText(KondisiStruktur.this, stuk+" "+(position+1)+" berhasil dihapus", Toast.LENGTH_SHORT).show();
-                            MainActivity.mSQLiteHelper.deleteDataKerusakan(arrID.get(position));
+                            Toast.makeText(KondisiStruktur.this, stuk+" "+(position)+" berhasil dihapus", Toast.LENGTH_SHORT).show();
+                            MainActivity.mSQLiteHelper.deleteDataKerusakan(arrID.get(position-1));
                             finish();
                             overridePendingTransition(0, 0);
                             startActivity(getIntent());
@@ -274,7 +287,7 @@ public class KondisiStruktur extends AppCompatActivity {
         }
         mAdapter.notifyDataSetChanged();
         if(mList.size()==0){
-            Toast.makeText(this, "Data kosong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Data masih kosong", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -284,12 +297,8 @@ public class KondisiStruktur extends AppCompatActivity {
             MainActivity.mSQLiteHelper.updateDataKerusakan(level,id);
             mList.set(pos, new Model2(id,kode,stuktur,level));
 
-//            updateList();
             mAdapter.notifyDataSetChanged();
-//            finish();
-//            overridePendingTransition(0, 0);
-//            startActivity(getIntent());
-//            overridePendingTransition(0, 0);
+
         }
         catch (Exception e){
             Log.e("error", e.getMessage());

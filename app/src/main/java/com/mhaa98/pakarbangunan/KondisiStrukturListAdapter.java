@@ -44,7 +44,7 @@ public class KondisiStrukturListAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView strukturTxt;
         TextView textKondisi;
-        ImageButton addPoto;
+//        ImageButton addPoto;
 
     }
 
@@ -58,18 +58,8 @@ public class KondisiStrukturListAdapter extends BaseAdapter {
             row = inflater.inflate(layout,null);
             holder.textKondisi = row.findViewById(R.id.keterangan_level);
             holder.strukturTxt = row.findViewById(R.id.list_txt);
-            holder.addPoto = row.findViewById(R.id.add_foto);
+//            holder.addPoto = row.findViewById(R.id.add_foto);
 
-//            holder.addPoto.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Model2 model = kolomList.get(position);
-//                    Toast.makeText(context, "camera "+model.getId(), Toast.LENGTH_SHORT).show();
-//
-//                }
-//            });
-
-//            holder.imageView = row.findViewById(R.id.poto_bangunan);
             row.setTag(holder);
         }
         else {
@@ -92,21 +82,25 @@ public class KondisiStrukturListAdapter extends BaseAdapter {
             holder.textKondisi.setText("Rusak Berat");
             holder.textKondisi.setTextColor(Color.rgb(255,51,51));
         }
-        holder.addPoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Model2 model = kolomList.get(position);
-                Intent i = new Intent(context.getApplicationContext(), AmbilGambarRetakan.class);
-                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                Bundle bun = new Bundle();
-                bun.putInt("id", model.getId());
-                bun.putInt("stuk",model.getStuktur());
-                bun.putInt("pos",position);
-                i.putExtras(bun);
-                context.getApplicationContext().startActivity(i);
-
-            }
-        });
+        else if(model.getLevel()==0){
+            holder.textKondisi.setText("Tidak Rusak");
+            holder.textKondisi.setTextColor(Color.rgb(0,0,0));
+        }
+//        holder.addPoto.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Model2 model = kolomList.get(position);
+//                Intent i = new Intent(context.getApplicationContext(), AmbilGambarRetakan.class);
+//                i.addFlags(FLAG_ACTIVITY_NEW_TASK);
+//                Bundle bun = new Bundle();
+//                bun.putInt("id", model.getId());
+//                bun.putInt("stuk",model.getStuktur());
+//                bun.putInt("pos",position);
+//                i.putExtras(bun);
+//                context.getApplicationContext().startActivity(i);
+//
+//            }
+//        });
 
 //        byte[] recordImage = model.getPoto();
 //        Bitmap bitmap = BitmapFactory.decodeByteArray(recordImage,0,recordImage.length);
