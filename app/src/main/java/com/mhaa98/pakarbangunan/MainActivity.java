@@ -126,12 +126,13 @@ public class MainActivity extends AppCompatActivity {
                     arrKepercayaan.add(c.getDouble(1));
                 }
 
-                if(arrKepercayaan.get(position)==0) {
-                    moveToDiagonis(arrID.get(position));
-                }
-                else{
-                    moveToHasilDiagnosis(arrID.get(position));
-                }
+                moveToDiagonis(arrID.get(position));
+//                if(arrKepercayaan.get(position)==0) {
+//                    moveToDiagonis(arrID.get(position));
+//                }
+//                else{
+//                    moveToHasilDiagnosis(arrID.get(position));
+//                }
 
             }
         });
